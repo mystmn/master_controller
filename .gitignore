@@ -7,3 +7,4 @@ results/*
 helper/email.py
 venv/*
 helper/__pycache__*/
+*.db

@@ -1,20 +1,21 @@
 # https://github.com/dbader/schedule/blob/master/FAQ.rst
-import helper, model
+import helper
+import model
 
 '''
 # Created by Paul Cameron
 '''
-print("** {} **\n".format(model.config.definition['ProjectName']))
-print("** {} **".format(model.config.definition['ProjectPurpose']))
+print("** {} **\n".format(model.definition()['ProjectName']))
+print("** {} **".format(model.definition()['ProjectPurpose']))
 
 while True:
-    if model.config.definition['Schedule']:
+    if model.definition()['Schedule']:
         pass
 
     else:
         hc = helper.Controller()
 
-        if not hc.main_station():
+        if not hc.station():
             exit()
 
         else:

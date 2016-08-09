@@ -48,8 +48,8 @@ class FileManagement(object):
             pass
 
         # Time stamp the log
-        #log_path.write('\n{}'.format(device_class['start']))
-        #log_path.write('\n{}'.format(device_class['finish']))
+        # log_path.write('\n{}'.format(device_class['start']))
+        # log_path.write('\n{}'.format(device_class['finish']))
 
         return log_path
 

@@ -7,9 +7,9 @@ class Menu(object):
         return [
             {
                 # Consider this a header Message #
-                'nmb': 0,
+                'nmb': "a",
                 'Mes': "Please select your scan option\n",
-                'com': "Thank you",
+                'com': True
             },
             {
                 'nmb': 1,

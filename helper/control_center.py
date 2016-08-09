@@ -25,19 +25,18 @@ class Controller(object):
         return False
 
     def display(self, x=False, msg=False):
-        print(msg)
         for each in helper.Menu.master_controller_display():
 
-            if each['nmb'] == 0:
+            if each['nmb'] == "a":
+                helper.cls()
                 print('{}'.format(each['Mes']))
-
             else:
+                print('{}) {}'.format(each['nmb'], each['Mes']))
                 if x:
                     if x == each['nmb']:
                         return each['com']
                     else:
                         msg = "{} isn't optional".format(x)
-                print('{}) {}'.format(each['nmb'], each['Mes']))
 
         if msg is not False:
             print('\n** {} **'.format(msg))
@@ -50,12 +49,9 @@ class Controller(object):
         try:
             if int(x):
                 return self.display(int(x))
+            elif str(x):
+                return self.display(False, "Ths following is not a valid choice '{}'.".format(x))
+            else:
+                pass
         except:
-            return self.display(False, "Ths following is not numerical '{}'...try again.".format(x))
-
-    def validate_int(self, x):
-        try:
-            int(x)
-            return int(x)
-        except ValueError:
-            return False
+            return self.display(False, "Ths following is not numerical '{}'.".format(x))

@@ -1,5 +1,5 @@
 import model
-import sqlite3 as sql
+import sqlite3 as sql3
 
 
 class DbController(object):
@@ -7,37 +7,62 @@ class DbController(object):
         self.table = table
 
     @staticmethod
-    def setup_beta():
+    def config():
         return {
             'db': r'{}{}'.format(model.definition()['Root'], "\model\main.db"),
             'limit': 20,  # Default Limit
             'desc': 'ORDER BY {} DESC'.format('id'),  # SELECT * FROM tablename ORDER BY column DESC LIMIT 1;
+            'c': ['name_device', 'ip_device', 'model_device', 'user_device', 'stamp']
         }
 
-    def table_creation(self, x=()):
+    def test_creation_table(self):
+        sc = self.config()['c']
+        print(self.config()['db'])
+
+            # 'Create TABLE bob (rowid INTEGER PRIMARY KEY, devices TEXT CHAR (50) NOT NULL)'
+            # SELECT `type` FROM `cats`
+
+        con = sql3.connect(self.config()['db'])
+        cursor = con.cursor().execute('SELECT `type` FROM `{}` '.format('cats'))
+        print(cursor.fetchall())
+        con.close()
+
+    def table_creation(self):
+        sc = self.config()['c']
+
         try:
-            with sql.connect(self.setup_beta()['db']) as con:
-                data = 'CREATE TABLE {} (email, username, phone, password)'.format(self.table)
+            with sql3.connect(self.config()['db']) as con:
+                con.cur = 'CREATE TABLE {} (' \
+                       'rowid INTEGER PRIMARY KEY, ' \
+                       '{} TEXT CHAR(50) NOT NULL, ' \
+                       '{} TEXT CHAR(50), ' \
+                       '{} TEXT CHAR(50), ' \
+                       '{} TEXT CHAR(50), ' \
+                       '{} CURRENT_TIMESTAMP' \
+                       ')' \
+                    .format(self.table, sc[0], sc[1], sc[2], sc[3])
                 con.cursor().execute(data)
                 con.commit()
                 con.close()
             return [True, "Created Table, {}".format(data)]
         except:
-            return [False, "Table wasn't created"]
+            return [False, "Table wasn't created, it may already exist"]
 
-    def insert_account_holder(self, email="bob", username="bob", phone="bob", password="bob"):
-            with sql.connect(self.setup_beta()['db']) as con:
+    def table_insert(self, a="", b="", c="", d="", e=""):
+        sc = self.config()['c']
 
-                con.cursor().execute("INSERT INTO {}(email,username,phone,password) VALUES (?,?,?,?)"\
-                           .format(self.table), (email, username, phone, password))
-                con.commit()
-            con.close()
+        with sql3.connect(self.config()['db']) as con:
+            con.cursor().execute("INSERT INTO {}({},{},{},{}, {}) VALUES (?,?,?,?,? )" \
+                                 .format(self.table, sc[0], sc[1], sc[2], sc[3], sc[4]), (a, b, c, d, e))
+            con.commit()
+        con.close()
+        return [True, "Data Inserted, {}, {}, {},{}".format(a, b, c, d)]
 
-    def select_account_holder(self, params=(), limit=()):
+    def table_select(self, params=(), limit=()):
         s = "SELECT "
         n = "LIMIT "
 
-        with sql.connect(self.setup_beta()['db']) as con:
+        with sql.connect(self.config()['db']) as con:
             cur = con.cursor()
 
             if params == ():
@@ -47,7 +72,7 @@ class DbController(object):
                 s += "{} FROM ".format(params)
 
             if limit == ():
-                s += "{} {}".format(str(self.table), n + str(self.setup_beta['limit']))
+                s += "{} {}".format(str(self.table), n + str(self.config()['limit']))
             else:
                 s += "{} {}".format(str(self.table), n + str(limit))
 

@@ -1,4 +1,4 @@
-import helper, model, sqlite3
+import helper, model
 
 '''
 Things to make
@@ -21,8 +21,13 @@ class Controller(object):
         s = helper.display()
         print("{} finished".format(s))
 
-        cows = model.DbController("cows")
-        cows.table_creation()
-        print(cows.insert_account_holder())
+        devices = model.DbController("devices")
+        if devices.table_creation()[0]:
+            print(devices.table_insert())
+            print(devices.table_select())
+
+        else:
+            print("This application is broken...")
+            print(devices.test_creation_table())
 
         return False

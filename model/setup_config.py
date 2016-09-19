@@ -1,4 +1,4 @@
-import model
+import model, os
 import sqlite3 as sql3
 
 
@@ -9,7 +9,8 @@ class DbController(object):
     @staticmethod
     def config():
         return {
-            'db': r'{}{}'.format(model.definition()['Root'], "\model\main.db"),
+            'db': r'{}{}'.format(model.definition()['Root'], "/model/"),
+            'file': "main.db",
             'limit': 20,  # Default Limit
             'desc': 'ORDER BY {} DESC'.format('id'),  # SELECT * FROM tablename ORDER BY column DESC LIMIT 1;
             'c': ['name_device', 'ip_device', 'model_device', 'user_device', 'stamp']
@@ -19,27 +20,69 @@ class DbController(object):
         sc = self.config()['c']
         print(self.config()['db'])
 
-            # 'Create TABLE bob (rowid INTEGER PRIMARY KEY, devices TEXT CHAR (50) NOT NULL)'
-            # SELECT `type` FROM `cats`
+        # 'Create TABLE bob (rowid INTEGER PRIMARY KEY, devices TEXT CHAR (50) NOT NULL)'
+        # SELECT `type` FROM `cats`
+        # sqlite3 mydatabase.db < db.schema
+        try:
+            con = sql3.connect(self.config()['db'] + self.config()['file'])
 
-        con = sql3.connect(self.config()['db'])
-        cursor = con.cursor().execute('SELECT `type` FROM `{}` '.format('cats'))
-        print(cursor.fetchall())
+            con.cursor().execute('INSERT INTO {}({},{}) VALUES (?,?)'.format("project", "name", "description"),
+                                 ("pacmans", "Gogogog!")
+                                 )
+            con.commit()
+            con.close()
+            return "Inserted data successful"
+
+        except:
+            return "Failed Migration"
+
+        # cursor = con.cursor().execute('SELECT `name` FROM `{}` '.format('project'))
+        # print(cursor.fetchall())
+        # con.close()
+
+    def test_insert_data(self):
+        con = sql3.connect(self.config()['db'] + self.config()['file'])
+        cursor = con.cursor().execute("INSERT INTO {}({},{},{},{}, {}) VALUES (?,?,?,?,? )" \
+                                      .format(self.table, sc[0], sc[1], sc[2], sc[3], sc[4]), (a, b, c, d, e)
+                                      )
+        con.commit()
         con.close()
+
+    def table_confirm_exist(self, loop=False):
+
+        # print(self.config()['db'])
+        # print(os.path.exists(self.config()['db'] + self.config()['file']))
+
+        if not os.path.exists(self.config()['db'] + self.config()['file']):
+
+            if not loop:
+                try:
+                    os.chdir(self.config()['db'])
+                    open(self.config()['file'], "w")
+
+                except:
+                    return False
+
+                return self.table_confirm_exist(True)
+
+            return False
+
+        else:
+            return True
 
     def table_creation(self):
         sc = self.config()['c']
 
         try:
-            with sql3.connect(self.config()['db']) as con:
+            with sql3.connect(self.config()['db'] + self.config()['file']) as con:
                 con.cur = 'CREATE TABLE {} (' \
-                       'rowid INTEGER PRIMARY KEY, ' \
-                       '{} TEXT CHAR(50) NOT NULL, ' \
-                       '{} TEXT CHAR(50), ' \
-                       '{} TEXT CHAR(50), ' \
-                       '{} TEXT CHAR(50), ' \
-                       '{} CURRENT_TIMESTAMP' \
-                       ')' \
+                          'rowid INTEGER PRIMARY KEY, ' \
+                          '{} TEXT CHAR(50) NOT NULL, ' \
+                          '{} TEXT CHAR(50), ' \
+                          '{} TEXT CHAR(50), ' \
+                          '{} TEXT CHAR(50), ' \
+                          '{} CURRENT_TIMESTAMP' \
+                          ')' \
                     .format(self.table, sc[0], sc[1], sc[2], sc[3])
                 con.cursor().execute(data)
                 con.commit()

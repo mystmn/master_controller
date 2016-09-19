@@ -22,6 +22,10 @@ class Controller(object):
         print("{} finished".format(s))
 
         devices = model.DbController("devices")
+
+        if not devices.table_confirm_exist():
+            exit("Unable to create file in the requested location")
+
         if devices.table_creation()[0]:
             print(devices.table_insert())
             print(devices.table_select())

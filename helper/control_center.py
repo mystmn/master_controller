@@ -19,16 +19,15 @@ class Controller(object):
     @staticmethod
     def station():
         s = helper.display()
-        print("{} finished".format(s))
 
         devices = model.DbController("devices")
 
-        if not devices.table_confirm_exist():
+        if not devices.database_confirmation():
             exit("Unable to create file in the requested location")
 
-        if devices.table_creation()[0]:
-            print(devices.table_insert())
-            print(devices.table_select())
+        if devices.creation_table():
+            print(devices.insert_data())
+            print(devices.select_data())
 
         else:
             print("This application is broken...")
